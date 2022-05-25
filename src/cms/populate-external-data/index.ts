@@ -1,19 +1,17 @@
-import type { CMSFilters } from '../../types/CMSFilters';
+import type { CMSList } from '../../types/CMSList';
 import type { Product } from './types';
 var Airtable = require('airtable');
-
+ 
 /**
  * Populate CMS Data from an external API.
  */
 window.fsAttributes = window.fsAttributes || [];
 window.fsAttributes.push([
-  'cmsfilter',
-  async (filtersInstances: CMSFilters[]) => {
-    // Get the filters instance
-    const [filtersInstance] = filtersInstances;
+  'cmsload',
+  async (listInstances: CMSList[]) => {
 
     // Get the list instance
-    const { listInstance } = filtersInstance;
+    const [ listInstance ] = listInstances;
 
     // Save a copy of the template
     const [firstItem] = listInstance.items;
@@ -31,31 +29,6 @@ window.fsAttributes.push([
     // Populate the list
 
     await listInstance.addItems(newItems);
-
-    // Get the template filter
-    const filterTemplateElement = filtersInstance.form.querySelector<HTMLLabelElement>('[data-element="filter"]');
-    if (!filterTemplateElement) return;
-
-    // Get the parent wrapper
-    const filtersWrapper = filterTemplateElement.parentElement;
-    if (!filtersWrapper) return;
-
-    // Remove the template from the DOM
-    filterTemplateElement.remove();
-
-    // Collect the categories
-    const categories = collectCategories(products);
-
-    // Create the new filters and append the to the parent wrapper
-    for (const category of categories) {
-      const newFilter = createFilter(category, filterTemplateElement);
-      if (!newFilter) continue;
-
-      filtersWrapper.append(newFilter);
-    }
-
-    // Sync the CMSFilters instance with the new created filters
-    filtersInstance.storeFiltersData();
   },
 ]);
 
@@ -79,7 +52,6 @@ const fetchProducts = async () => {
             try {
               image = record.get('Product Image')[0].url
             } catch(error) {
-
             }
 
             const item: Product = {
@@ -94,6 +66,7 @@ const fetchProducts = async () => {
               individualDatasheet: record?.get('Individual Datasheet')?? " ",
               sectionDatasheet: record?.get('Section Datasheet')?? " ",
               image: image,
+              crossRefrence: record?.get('Cross Reference Numbers')?? " ",
             };
 
             data.push(item);
@@ -134,6 +107,7 @@ const createItem = (product: Product, templateElement: HTMLDivElement) => {
   const voltage = newItem.querySelector<HTMLParagraphElement>('[data-element="voltage"]');
   const characteristics = newItem.querySelector<HTMLParagraphElement>('[data-element="characteristics"]');
   const size = newItem.querySelector<HTMLParagraphElement>('[data-element="size"]');
+  const cxr = newItem.querySelector<HTMLParagraphElement>('[data-element="cxr"]');
 
   // Populate inner elements
   if (image) image.src = product.image;
@@ -147,47 +121,9 @@ const createItem = (product: Product, templateElement: HTMLDivElement) => {
   if (voltage) voltage.textContent = product.voltage;
   if (characteristics) characteristics.textContent = product.characteristics;
   if (size) size.textContent = product.size;
+  if (cxr) cxr.textContent = product.crossRefrence;
 
   return newItem;
 };
 
-/**
- * Collects all the categories from the products' data.
- * @param products The products' data.
- *
- * @returns An array of {@link Product} categories.
- */
-const collectCategories = (products: Product[]) => {
-  const categories: Set<Product['productCategory']> = new Set();
-
-  for (const { productCategory } of products) {
-    categories.add(productCategory);
-  }
-
-  return [...categories];
-};
-
-/**
- * Creates a new radio filter from the template element.
- * @param category The filter value.
- * @param templateElement The template element.
- *
- * @returns A new category radio filter.
- */
-const createFilter = (category: Product['productCategory'], templateElement: HTMLLabelElement) => {
-  // Clone the template element
-  const newFilter = templateElement.cloneNode(true) as HTMLLabelElement;
-
-  // Query inner elements
-  const label = newFilter.querySelector('span');
-  const radio = newFilter.querySelector('input');
-
-  if (!label || !radio) return;
-
-  // Populate inner elements
-  label.textContent = category;
-  radio.value = category;
-
-  return newFilter;
-};
 

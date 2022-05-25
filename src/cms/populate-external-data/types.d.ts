@@ -10,11 +10,6 @@ export interface Product {
   size: string;
   individualDatasheet: string;
   sectionDatasheet: string;
+  crossRefrence: string;
 }
 
-const enum category {
-  Electronics = 'electronics',
-  Jewelery = 'jewelery',
-  MenSClothing = "men's clothing",
-  WomenSClothing = "women's clothing",
-}
