@@ -9,14 +9,14 @@ window.fsAttributes = window.fsAttributes || [];
 window.fsAttributes.push([
   'cmsload',
   async (listInstances: CMSList[]) => {
-
+    console.log("start")
     // Get the list instance
     const [ listInstance ] = listInstances;
 
     // Save a copy of the template
     const [firstItem] = listInstance.items;
     const itemTemplateElement = firstItem.element;
-
+    console.log("fetch starts")
     // Fetch external data
     const products = await fetchProducts();
 
@@ -27,8 +27,9 @@ window.fsAttributes.push([
       return createItem(product, itemTemplateElement)
     })
     // Populate the list
-
+    console.log("items added")
     await listInstance.addItems(newItems);
+    console.log("end")
   },
 ]);
 
@@ -40,12 +41,12 @@ const fetchProducts = async () => {
   return new Promise((resolve, reject) => {
     var base = new Airtable({ apiKey: 'keyVaqaXzXRDSsa31' }).base('app6CABYWEh8dxlQd');
     let data: Product[] = [];
-
+    console.log("airtable starts")
     base('Product Details').select({
       view: "Grid view"
     })
       .eachPage(function page(records: any[], fetchNextPage: any) {
-        try {
+        // try {
           records.forEach(function (record: any) {
             
             let image = ""
@@ -55,24 +56,23 @@ const fetchProducts = async () => {
             }
 
             const item: Product = {
-              partNumber: record?.get('Part Number')??" ",
-              description: record?.get('Description')?? " ",
-              productCategory: record?.get('Product Category')?? " ",
-              productSegment: record?.get('Product Segment')?? " ",
-              ampRating: record?.get('Amp Rating')?? " ",
-              voltage: record?.get('Voltage')?? " ",
-              characteristics: record?.get('Characteristics')?? " ",
-              size: record?.get('Size')?? " ",
-              individualDatasheet: record?.get('Individual Datasheet')?? " ",
-              sectionDatasheet: record?.get('Section Datasheet')?? " ",
+              partNumber: record.get('Part Number') || " ",
+              description: record.get('Description') || " ",
+              productCategory: record.get('Product Category')|| " ",
+              productSegment: record.get('Product Segment')|| " ",
+              ampRating: record.get('Amp Rating')|| " ",
+              voltage: record.get('Voltage')|| " ",
+              characteristics: record.get('Characteristics')|| " ",
+              size: record.get('Size')|| " ",
+              individualDatasheet: record.get('Individual Datasheet')|| " ",
+              sectionDatasheet: record.get('Section Datasheet')|| " ",
               image: image,
-              crossRefrence: record?.get('Cross Reference Numbers')?? " ",
+              crossRefrence: record.get('Cross Reference Numbers')|| " ",
             };
-            console.log(item.productCategory,item.productSegment);
-
+            console.log("product queried")
             data.push(item);
           });
-        } catch (e) { console.log('error inside eachPage => ', e) }
+        // } catch (e) { console.log('error inside eachPage => ', e) }
         fetchNextPage();
       }, function done(err: any) {
         if (err) {
