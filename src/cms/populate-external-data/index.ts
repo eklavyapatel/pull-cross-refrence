@@ -46,7 +46,7 @@ const fetchProducts = async () => {
       view: "Grid view"
     })
       .eachPage(function page(records: any[], fetchNextPage: any) {
-        // try {
+        try {
           records.forEach(function (record: any) {
             
             let image = ""
@@ -72,7 +72,7 @@ const fetchProducts = async () => {
             console.log("product queried")
             data.push(item);
           });
-        // } catch (e) { console.log('error inside eachPage => ', e) }
+        } catch (e) { console.log('error inside eachPage => ', e) }
         fetchNextPage();
       }, function done(err: any) {
         if (err) {
