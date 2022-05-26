@@ -100,8 +100,8 @@ const createItem = (product: Product, templateElement: HTMLDivElement) => {
   const sectionDatasheet = newItem.querySelector<HTMLAnchorElement>('[data-element="section datasheet"]');
   const individualDatasheet = newItem.querySelector<HTMLAnchorElement>('[data-element="individual datasheet"]');
   const partNumber = newItem.querySelector<HTMLDivElement>('[data-element="part number"]');
-  const productCategory = newItem.querySelector<HTMLDivElement>('[data-element="product category"]');
-  const productSegment = newItem.querySelector<HTMLDivElement>('[data-element="product segment"]');
+  const productCategory = newItem.querySelector<HTMLParagraphElement>('[data-element="category"]');
+  const productSegment = newItem.querySelector<HTMLParagraphElement>('[data-element="segment"]');
   const description = newItem.querySelector<HTMLParagraphElement>('[data-element="description"]');
   const ampRating = newItem.querySelector<HTMLParagraphElement>('[data-element="amp rating"]');
   const voltage = newItem.querySelector<HTMLParagraphElement>('[data-element="voltage"]');
