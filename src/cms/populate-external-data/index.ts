@@ -68,6 +68,7 @@ const fetchProducts = async () => {
               image: image,
               crossRefrence: record?.get('Cross Reference Numbers')?? " ",
             };
+            console.log(item.productCategory,item.productSegment);
 
             data.push(item);
           });
