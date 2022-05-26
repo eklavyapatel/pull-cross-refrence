@@ -1,8 +1,8 @@
 export interface Product {
   partNumber: string;
   description: string;
-  productCategory: productCategory;
-  productSegment: productSegment;
+  productCategory: string;
+  productSegment: string;
   image: string;
   ampRating: string;
   voltage: string;
