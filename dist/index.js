@@ -2075,10 +2075,9 @@
   var Airtable = require_airtable_umd();
   window.fsAttributes = window.fsAttributes || [];
   window.fsAttributes.push([
-    "cmsfilter",
-    async (filtersInstances) => {
-      const [filtersInstance] = filtersInstances;
-      const { listInstance } = filtersInstance;
+    "cmsload",
+    async (listInstances) => {
+      const [listInstance] = listInstances;
       const [firstItem] = listInstance.items;
       const itemTemplateElement = firstItem.element;
       const products = await fetchProducts();
@@ -2087,21 +2086,6 @@
         return createItem(product, itemTemplateElement);
       });
       await listInstance.addItems(newItems);
-      const filterTemplateElement = filtersInstance.form.querySelector('[data-element="filter"]');
-      if (!filterTemplateElement)
-        return;
-      const filtersWrapper = filterTemplateElement.parentElement;
-      if (!filtersWrapper)
-        return;
-      filterTemplateElement.remove();
-      const categories = collectCategories(products);
-      for (const category of categories) {
-        const newFilter = createFilter(category, filterTemplateElement);
-        if (!newFilter)
-          continue;
-        filtersWrapper.append(newFilter);
-      }
-      filtersInstance.storeFiltersData();
     }
   ]);
   var fetchProducts = async () => {
@@ -2129,8 +2113,10 @@
               size: record?.get("Size") ?? " ",
               individualDatasheet: record?.get("Individual Datasheet") ?? " ",
               sectionDatasheet: record?.get("Section Datasheet") ?? " ",
-              image
+              image,
+              crossRefrence: record?.get("Cross Reference Numbers") ?? " "
             };
+            console.log(item.productCategory, item.productSegment);
             data.push(item);
           });
         } catch (e) {
@@ -2152,13 +2138,14 @@
     const sectionDatasheet = newItem.querySelector('[data-element="section datasheet"]');
     const individualDatasheet = newItem.querySelector('[data-element="individual datasheet"]');
     const partNumber = newItem.querySelector('[data-element="part number"]');
-    const productCategory = newItem.querySelector('[data-element="product category"]');
-    const productSegment = newItem.querySelector('[data-element="product segment"]');
+    const productCategory = newItem.querySelector('[data-element="category"]');
+    const productSegment = newItem.querySelector('[data-element="segment"]');
     const description = newItem.querySelector('[data-element="description"]');
     const ampRating = newItem.querySelector('[data-element="amp rating"]');
     const voltage = newItem.querySelector('[data-element="voltage"]');
     const characteristics = newItem.querySelector('[data-element="characteristics"]');
     const size = newItem.querySelector('[data-element="size"]');
+    const cxr = newItem.querySelector('[data-element="cxr"]');
     if (image)
       image.src = product.image;
     if (individualDatasheet)
@@ -2181,23 +2168,8 @@
       characteristics.textContent = product.characteristics;
     if (size)
       size.textContent = product.size;
+    if (cxr)
+      cxr.textContent = product.crossRefrence;
     return newItem;
-  };
-  var collectCategories = (products) => {
-    const categories = /* @__PURE__ */ new Set();
-    for (const { productCategory } of products) {
-      categories.add(productCategory);
-    }
-    return [...categories];
-  };
-  var createFilter = (category, templateElement) => {
-    const newFilter = templateElement.cloneNode(true);
-    const label = newFilter.querySelector("span");
-    const radio = newFilter.querySelector("input");
-    if (!label || !radio)
-      return;
-    label.textContent = category;
-    radio.value = category;
-    return newFilter;
   };
 })();
