@@ -16,6 +16,13 @@ window.fsAttributes.push([
     // Save a copy of the template
     const [firstItem] = listInstance.items;
     const itemTemplateElement = firstItem.element;
+
+    //add initial item
+    const loader: HTMLElement | null = document.getElementById('loader');
+    if(loader){
+      loader.style.display = "block";
+    }
+
     console.log("fetch starts")
     // Fetch external data
     const products = await fetchProducts();
@@ -26,8 +33,15 @@ window.fsAttributes.push([
     const newItems = products.map((product) => {
       return createItem(product, itemTemplateElement)
     })
+
     // Populate the list
     console.log("items added")
+
+    //remove initial item
+    if(loader){
+      loader.style.display = "none";
+    }
+
     await listInstance.addItems(newItems);
     console.log("end")
   },
