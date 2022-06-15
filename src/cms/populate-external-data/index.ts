@@ -9,7 +9,6 @@ window.fsAttributes = window.fsAttributes || [];
 window.fsAttributes.push([
   'cmsload',
   async (listInstances: CMSList[]) => {
-    console.log("start")
     // Get the list instance
     const [ listInstance ] = listInstances;
 
@@ -32,15 +31,15 @@ window.fsAttributes.push([
     })
 
     // Populate the list
-    console.log("items added")
+    console.log("fetch ends")
 
     //remove initial item
     if(loader){
       loader.style.display = "none";
     }
+    console.log("loader removed")
 
     await listInstance.addItems(newItems);
-    console.log("end")
   },
 ]);
 
