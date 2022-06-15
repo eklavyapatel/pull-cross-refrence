@@ -19,9 +19,6 @@ window.fsAttributes.push([
 
     //add initial item
     const loader: HTMLElement | null = document.getElementById('loader');
-    if(loader){
-      loader.style.display = "block";
-    }
 
     console.log("fetch starts")
     // Fetch external data
