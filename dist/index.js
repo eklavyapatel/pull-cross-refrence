@@ -2077,19 +2077,22 @@
   window.fsAttributes.push([
     "cmsload",
     async (listInstances) => {
-      console.log("start");
       const [listInstance] = listInstances;
       const [firstItem] = listInstance.items;
       const itemTemplateElement = firstItem.element;
+      const loader = document.getElementById("loader");
       console.log("fetch starts");
       const products = await fetchProducts();
       listInstance.clearItems();
       const newItems = products.map((product) => {
         return createItem(product, itemTemplateElement);
       });
-      console.log("items added");
+      console.log("fetch ends");
+      if (loader) {
+        loader.style.display = "none";
+      }
+      console.log("loader removed");
       await listInstance.addItems(newItems);
-      console.log("end");
     }
   ]);
   var fetchProducts = async () => {
